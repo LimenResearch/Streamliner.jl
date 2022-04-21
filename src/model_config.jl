@@ -17,13 +17,29 @@ _makesymbol(D::Dict) = Dict(_makesymbol.([D...])...)
 function Flux.Dense(l_params::Dict, input_size::Union{Tuple,Vector})
     out = l_params["out"]
     delete!(l_params, "out")
-    layer = Dense(input_size[1], out; _makesymbol(l_params)...)
+    σ = l_params["sigma"]
+    delete!(l_params["sigma"])
+    layer = Dense(input_size[1], out, σ; _makesymbol(l_params)...)
+end
+
+function Flux.Conv(l_params::Dict, input_size::Union{Tuple,Vector})
+    filter, in => out, σ = identity;
+    stride = 1, pad = 0, dilation = 1, groups = 1, [bias, init]
+    in_ch = last(input_size)
+    out_ch = l_params["out"]
+    delete!(l_params["out"])
+    filter = Tuple(Integer(k) for k in l_params["filter"])
+    delete!(l_params["filter"])
+    σ = l_params["sigma"]
+    delete!(l_params["sigma"])
+    layer = Conv(l_params["filter"], in_ch => out_ch, σ; _makesymbol(l_params)...)
 end
 
 get_output_size(layer::Dense) = [size(layer.weight)[1]]
 get_output_size(layer::Flux.flatten, input_size=Union{Vector, Tuple}) = prod(input_size) 
+get_output_size(layer::Flux.Conv, input_size=Union{Vector, Tuple}) = get_conv_outsize(layer, input_size)
 
-const layer_to_constructor = Dict("dense" => Flux.Dense, "conv" => Flux.Conv)
+
 
 Base.@kwdef struct Architecture
     name::String

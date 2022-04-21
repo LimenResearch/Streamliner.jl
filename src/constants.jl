@@ -1,6 +1,7 @@
 using Flux
 
-const name_to_layer = Dict("dense" => Dense, "conv" => Conv)
+const layer_to_constructor = Dict("dense" => Flux.Dense, "conv" => Flux.Conv)
+
 const reshape_layers = Dict(
     ("dense", "dense") => missing,
     ("conv", "conv") => missing,

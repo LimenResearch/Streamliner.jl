@@ -2,13 +2,6 @@
     name = "dense_test"
     input_size = [10]
 
-# [architecture.layers]
-#     [architecture.layers.1]
-#         in_ = 10
-#         out_ = 100
-#     [architecture.layers.2]
-#         in_ = 100
-#         out_ = 10
 layers = [
     {f = "dense", out=100},
     {f = "dense", out=10}

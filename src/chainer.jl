@@ -18,7 +18,7 @@ function to_list(param, ndims_ker)
     end
 end
 
-function get_output_shape(layer::Conv, input_size::Tuple)
+function get_conv_outsize(layer::Conv, input_size::Union{Vector,Tuple})
     ind = lastindex(size(layer.weight))
     kernel = size(layer.weight)[1:ind-2]
     out_ch = last(size(layer.weight))
