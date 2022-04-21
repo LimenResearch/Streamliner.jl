@@ -17,28 +17,34 @@ _makesymbol(D::Dict) = Dict(_makesymbol.([D...])...)
 function Flux.Dense(l_params::Dict, input_size::Union{Tuple,Vector})
     out = l_params["out"]
     delete!(l_params, "out")
-    σ = l_params["sigma"]
-    delete!(l_params["sigma"])
+    σ = string_to_sigma[l_params["sigma"]]
+    delete!(l_params, "sigma")
     layer = Dense(input_size[1], out, σ; _makesymbol(l_params)...)
 end
 
 function Flux.Conv(l_params::Dict, input_size::Union{Tuple,Vector})
-    filter, in => out, σ = identity;
-    stride = 1, pad = 0, dilation = 1, groups = 1, [bias, init]
+    """l_params can heave keys:
+    filter, out, σ = identity, stride = 1, pad = 0, dilation = 1, groups = 1,
+    bias=true, init=glorot_uniform
+    """
     in_ch = last(input_size)
     out_ch = l_params["out"]
-    delete!(l_params["out"])
+    delete!(l_params, "out")
     filter = Tuple(Integer(k) for k in l_params["filter"])
-    delete!(l_params["filter"])
-    σ = l_params["sigma"]
-    delete!(l_params["sigma"])
-    layer = Conv(l_params["filter"], in_ch => out_ch, σ; _makesymbol(l_params)...)
+    delete!(l_params, "filter")
+    σ = string_to_sigma[l_params["sigma"]]
+    delete!(l_params, "sigma")
+    layer = Conv(filter, in_ch => out_ch, σ; _makesymbol(l_params)...)
 end
 
-get_output_size(layer::Dense) = [size(layer.weight)[1]]
-get_output_size(layer::Flux.flatten, input_size=Union{Vector, Tuple}) = prod(input_size) 
-get_output_size(layer::Flux.Conv, input_size=Union{Vector, Tuple}) = get_conv_outsize(layer, input_size)
-
+function get_output_size(layer, input_size::Union{Vector, Tuple})
+    println("creating dummy")
+    dummy = rand(Float32, tuple(input_size...,1)...)
+    println("dummy has shape ", size(dummy))
+    output_size = layer(dummy) |> size
+    println("the ouput size is ", output_size)
+    output_size = output_size[1:lastindex(output_size)-1] 
+end
 
 
 Base.@kwdef struct Architecture
@@ -53,18 +59,21 @@ function Architecture(path::String)
 
     layers = []
     prev_f = missing
-    for layer in d["architecture"]["layers"]
-        f = layer["f"]
-        constructor = layer_to_constructor[f]
-        delete!(layer, "f")
-        layer = constructor(layer, input_size)
+    for l_params in d["architecture"]["layers"]
+        f = l_params["f"]
+        println("f is ", f)
+        delete!(l_params, "f")
+        println(l_params)
+        layer = layer_to_constructor[f](l_params, input_size)
+        println("layer is ", layer)
         push!(layers, layer)
-        input_size = get_output_size(layer)
-        if reshape_layers[(prev_f, f)] !== missing
-            layer = reshape_layers[(prev_f, f)]
-            push!(layers, layer)
-            input_size = get_output_size(layer, input_size)
-        end
+        input_size = get_output_size(layer, input_size)
+        println("input size is ", input_size)
+        # if reshape_layers[(prev_f, f)] !== missing
+        #     layer = reshape_layers[(prev_f, f)]
+        #     push!(layers, layer)
+        #     input_size = get_output_size(layer, input_size)
+        # end
         prev_f = f
     end
 
@@ -73,3 +82,6 @@ function Architecture(path::String)
 end
 
 get_model(architecture::Architecture) = Flux.Chain(architecture.layers...)
+
+mlp = Architecture("../static/mlp.toml")
+conv = Architecture("../static/conv.toml")

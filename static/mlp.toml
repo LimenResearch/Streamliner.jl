@@ -3,6 +3,6 @@
     input_size = [10]
 
 layers = [
-    {f = "dense", out=100},
-    {f = "dense", out=10}
+    {f = "dense", out=100, sigma="identity"},
+    {f = "dense", out=10, sigma="relu"}
 ]
