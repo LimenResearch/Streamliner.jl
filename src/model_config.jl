@@ -3,6 +3,7 @@ using Flux
 using IterTools
 
 include("./constants.jl")
+include("./chainer.jl")
 """
 When reading TOML files it seems dictionary keys are strings, but Symbols are 
 needed to initialize structures from dict splat. Here is what I found people do.
@@ -19,7 +20,8 @@ function Flux.Dense(l_params::Dict, input_size::Union{Tuple,Vector})
     layer = Dense(input_size[1], out; _makesymbol(l_params)...)
 end
 
-get_output(layer::Dense) = [size(layer.weight)[1]]
+get_output_size(layer::Dense) = [size(layer.weight)[1]]
+get_output_size(layer::Flux.flatten, input_size=Union{Vector, Tuple}) = prod(input_size) 
 
 const layer_to_constructor = Dict("dense" => Flux.Dense, "conv" => Flux.Conv)
 
@@ -41,10 +43,12 @@ function Architecture(path::String)
         delete!(layer, "f")
         layer = constructor(layer, input_size)
         push!(layers, layer)
+        input_size = get_output_size(layer)
         if reshape_layers[(prev_f, f)] !== missing
-            push!(layers, reshape_layers[(prev_f, f)])
+            layer = reshape_layers[(prev_f, f)]
+            push!(layers, layer)
+            input_size = get_output_size(layer, input_size)
         end
-        input_size = get_output(layer)
         prev_f = f
     end
 
