@@ -78,6 +78,6 @@ end
 
 get_model(architecture::Architecture) = Flux.Chain(architecture.layers...)
 
-mlp = Architecture("../static/mlp.toml")
-conv = Architecture("../static/conv.toml")
-conv_class = Architecture("../static/conv_classifier.toml")
+# mlp = Architecture("../static/mlp.toml")
+# conv = Architecture("../static/conv.toml")
+# conv_class = Architecture("../static/conv_classifier.toml")
