@@ -1,11 +1,24 @@
 using Flux
+include("./resize_helper.jl")
 
-const layer_to_constructor = Dict("dense" => Flux.Dense, "conv" => Flux.Conv)
+const layer_to_constructor = Dict(
+    "dense" => Flux.Dense,
+    "conv" => Flux.Conv,
+    "rnn" => Flux.RNN,
+    "lstm" => Flux.LSTM,
+    "gru" => Flux.GRU,
+    )
+
+const dense_like = ["dense", "rnn", "lstm", "gru"]
+
+reduce_to_dense(name::String) = ifelse(name in dense_like, "dense", name)
+reduce_to_dense(list::Vector) = reduce_to_dense.(list)
 
 const reshape_layers = Dict(
     ("dense", "dense") => missing,
     ("conv", "conv") => missing,
     ("conv", "dense") => Flux.flatten,
+    ("dense", "conv") => dense_to_conv
 )
 
 const string_to_sigma = Dict(

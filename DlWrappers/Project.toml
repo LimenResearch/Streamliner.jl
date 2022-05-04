@@ -1,4 +1,5 @@
 [deps]
 DlWrappers = "32326c28-9ac7-4954-b80e-c95a277351a4"
 Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
+Primes = "27ebfcd6-29c5-5fa9-bf4b-fb8fc14df3ae"
 TOML = "fa267f1f-6049-4f14-aa54-33bafae1ed76"

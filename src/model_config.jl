@@ -13,6 +13,8 @@ _makesymbol(x) = x   # default
 _makesymbol(p::Pair) = (Symbol(p.first) => _makesymbol(p.second))
 _makesymbol(D::Dict) = Dict(_makesymbol.([D...])...)
 
+
+
 function Flux.Dense(l_params::Dict, input_size::Union{Tuple,Vector})
     out = l_params["out"]
     delete!(l_params, "out")
@@ -36,12 +38,19 @@ function Flux.Conv(l_params::Dict, input_size::Union{Tuple,Vector})
     layer = Conv(filter, in_ch => out_ch, σ; _makesymbol(l_params)...)
 end
 
+function Flux.RNN(l_params::Dict, input_size::Union{Tuple,Vector})
+    # TODO: This constructor behaves exactly as dense. We could implement a DenseLike
+    # constructor.
+    out = l_params["out"]
+    delete!(l_params, "out")
+    σ = string_to_sigma[l_params["sigma"]]
+    delete!(l_params, "sigma")
+    layer = RNN(input_size[1], out, σ; _makesymbol(l_params)...)
+end
+
 function get_output_size(layer, input_size::Union{Vector, Tuple})
-    println("creating dummy")
     dummy = rand(Float32, tuple(input_size...,1)...)
-    println("dummy has shape ", size(dummy))
     output_size = layer(dummy) |> size
-    println("the ouput size is ", output_size)
     output_size = output_size[1:lastindex(output_size)-1] 
 end
 
@@ -50,30 +59,46 @@ Base.@kwdef struct Architecture
     name::String
     input_size::Union{Vector, Array, Tuple}
     layers::Vector{Any} # TODO specify entry type (Flux?)
+    num_epochs:: Integer = missing
+    optimizier:: String = missing
+    optimizer_params:: Dict = missing
+    batch_size:: Integer = missing
+    num_classes::Integer = missing
 end
 
 function Architecture(path::String)
     d = TOML.parsefile(path)
     input_size = d["architecture"]["input_size"]
+    layer_params = d["architecture"]["layers"]
+    num_classes = d["architecture"]["num_classes"]
+    if num_classes !== missing && last(layers)["out"] != num_classes
+        @warn ("The output size of the last layer will be set to $num_classes 
+                to match the number of classes provided in the configuration file.")
+        last(layer_params)["out"] = num_classes
+    end
+    layers = build_layers(layer_params, input_size)
+    d["architecture"]["layers"] = layers
+    architecture = Architecture(; _makesymbol(d["architecture"])...)
+end
 
+function build_layers(layer_params::Vector, input_size::Union{Vector, Array, Tuple})
     layers = []
     prev_f = missing
-    for l_params in d["architecture"]["layers"]
+
+    for l_params in layer_params
         f = l_params["f"]
         delete!(l_params, "f")
         layer = layer_to_constructor[f](l_params, input_size)
         push!(layers, layer)
         input_size = get_output_size(layer, input_size)
-        if prev_f !== missing && reshape_layers[(prev_f, f)] !== missing
-            layer = reshape_layers[(prev_f, f)]
+        if prev_f !== missing && reshape_layers[reduce_to_dense([prev_f, f])...] !== missing
+            layer = reshape_layers[reduce_to_dense([prev_f, f])...]
             push!(layers, layer)
             input_size = get_output_size(layer, input_size)
         end
         prev_f = f
     end
-
-    d["architecture"]["layers"] = layers
-    architecture = Architecture(; _makesymbol(d["architecture"])...)
+    return layers
 end
 
 get_model(architecture::Architecture) = Flux.Chain(architecture.layers...)
