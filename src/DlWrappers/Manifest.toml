@@ -1,0 +1,11 @@
+# This file is machine-generated - editing it directly is not advised
+
+julia_version = "1.7.0"
+manifest_format = "2.0"
+
+[[deps.DlWrappers]]
+git-tree-sha1 = "6406130d8f7ee982e370333e4d6f4b470fe9023b"
+repo-rev = "main"
+repo-url = "../.."
+uuid = "32326c28-9ac7-4954-b80e-c95a277351a4"
+version = "0.1.0"

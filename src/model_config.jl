@@ -2,14 +2,13 @@ using TOML
 using Flux
 using IterTools
 
-include("./constants.jl")
-include("./chainer.jl")
-"""
-When reading TOML files it seems dictionary keys are strings, but Symbols are 
-needed to initialize structures from dict splat. Here is what I found people do.
+include("./constants.jl");
 
-TODO: Rewrite this in a better way (?)
-"""
+# When reading TOML files it seems dictionary keys are strings, but Symbols are 
+# needed to initialize structures from dict splat. Here is what I found people do.
+
+# TODO: Rewrite this in a better way (?)
+
 _makesymbol(x) = x   # default 
 _makesymbol(p::Pair) = (Symbol(p.first) => _makesymbol(p.second))
 _makesymbol(D::Dict) = Dict(_makesymbol.([D...])...)
@@ -61,19 +60,15 @@ function Architecture(path::String)
     prev_f = missing
     for l_params in d["architecture"]["layers"]
         f = l_params["f"]
-        println("f is ", f)
         delete!(l_params, "f")
-        println(l_params)
         layer = layer_to_constructor[f](l_params, input_size)
-        println("layer is ", layer)
         push!(layers, layer)
         input_size = get_output_size(layer, input_size)
-        println("input size is ", input_size)
-        # if reshape_layers[(prev_f, f)] !== missing
-        #     layer = reshape_layers[(prev_f, f)]
-        #     push!(layers, layer)
-        #     input_size = get_output_size(layer, input_size)
-        # end
+        if prev_f !== missing && reshape_layers[(prev_f, f)] !== missing
+            layer = reshape_layers[(prev_f, f)]
+            push!(layers, layer)
+            input_size = get_output_size(layer, input_size)
+        end
         prev_f = f
     end
 
@@ -85,3 +80,4 @@ get_model(architecture::Architecture) = Flux.Chain(architecture.layers...)
 
 mlp = Architecture("../static/mlp.toml")
 conv = Architecture("../static/conv.toml")
+conv_class = Architecture("../static/conv_classifier.toml")

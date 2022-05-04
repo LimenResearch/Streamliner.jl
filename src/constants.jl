@@ -5,7 +5,7 @@ const layer_to_constructor = Dict("dense" => Flux.Dense, "conv" => Flux.Conv)
 const reshape_layers = Dict(
     ("dense", "dense") => missing,
     ("conv", "conv") => missing,
-    ("dense", "conv") => Flux.flatten,
+    ("conv", "dense") => Flux.flatten,
 )
 
 const string_to_sigma = Dict(
