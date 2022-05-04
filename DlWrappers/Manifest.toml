@@ -165,6 +165,13 @@ version = "1.10.0"
 deps = ["Random", "Serialization", "Sockets"]
 uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
+[[deps.DlWrappers]]
+git-tree-sha1 = "6406130d8f7ee982e370333e4d6f4b470fe9023b"
+repo-rev = "main"
+repo-url = ".."
+uuid = "32326c28-9ac7-4954-b80e-c95a277351a4"
+version = "0.1.0"
+
 [[deps.DocStringExtensions]]
 deps = ["LibGit2"]
 git-tree-sha1 = "b19534d1895d702889b219c382a6e18010797f0b"
