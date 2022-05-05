@@ -41,6 +41,7 @@ const string_to_sigma = Dict(
     "softshrink" => Flux.softshrink,
     "softsign" => Flux.softsign,
     "swish" => Flux.swish,
+    "tanh" => Flux.tanh,
     "tanhshrink" => Flux.tanhshrink,
     "trelu" => Flux.trelu,
 )

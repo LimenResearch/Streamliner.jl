@@ -4,8 +4,19 @@ julia_version = "1.7.0"
 manifest_format = "2.0"
 
 [[deps.DlWrappers]]
-git-tree-sha1 = "6406130d8f7ee982e370333e4d6f4b470fe9023b"
+git-tree-sha1 = "9870a065d4f0734c03ea2891ee4f1b6b4b6610ac"
 repo-rev = "main"
 repo-url = "../.."
 uuid = "32326c28-9ac7-4954-b80e-c95a277351a4"
 version = "0.1.0"
+
+[[deps.IntegerMathUtils]]
+git-tree-sha1 = "f366daebdfb079fd1fe4e3d560f99a0c892e15bc"
+uuid = "18e54dd8-cb9d-406c-a71d-865a43cbb235"
+version = "0.1.0"
+
+[[deps.Primes]]
+deps = ["IntegerMathUtils"]
+git-tree-sha1 = "747f4261ebe38a2bc6abf0850ea8c6d9027ccd07"
+uuid = "27ebfcd6-29c5-5fa9-bf4b-fb8fc14df3ae"
+version = "0.5.2"

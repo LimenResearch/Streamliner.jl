@@ -1,0 +1,15 @@
+[training]
+    num_epochs = 100
+    optimizier = "adam"
+    optimizer_params = {lr = 0.01}
+    batch_size = 32
+
+[architecture]
+    name = "lstm_test"
+    input_size = [10]
+
+layers = [
+    {f = "rnn", out=10, sigma="tanh"},
+    {f = "lstm", out=3},
+    {f = "gru", out=10}
+]
