@@ -51,3 +51,41 @@ const string_to_sigma_array = Dict(
     "logsoftmax" => Flux.logsoftmax,
     "logsumexp" => Flux.logsumexp,
 )
+
+const string_to_loss = Dict(
+    "mae" => Flux.Losses.mae,
+    "mse" => Flux.Losses.mse,
+    "msle" => Flux.Losses.msle,
+    "huber_loss" => Flux.Losses.huber_loss,
+    "label_smoothing" => Flux.Losses.label_smoothing,
+    "crossentropy" => Flux.Losses.crossentropy,
+    "logitcrossentropy" => Flux.Losses.logitcrossentropy,
+    "binarycrossentropy" => Flux.Losses.binarycrossentropy,
+    "logitbinarycrossentropy" => Flux.Losses.logitbinarycrossentropy,
+    "kldivergence" => Flux.Losses.kldivergence,
+    "poisson_loss" => Flux.Losses.poisson_loss,
+    "hinge_loss" => Flux.Losses.hinge_loss,
+    "squared_hinge_loss" => Flux.Losses.squared_hinge_loss,
+    "dice_coeff_loss" => Flux.Losses.dice_coeff_loss,
+    "tversky_loss" => Flux.Losses.tversky_loss,
+    "binary_focal_loss" => Flux.Losses.binary_focal_loss,
+    "focal_loss" => Flux.Losses.focal_loss,
+    "siamese_contrastive_loss" => Flux.Losses.siamese_contrastive_loss,
+)
+
+const string_to_optim = Dict(
+    "Descent" => Flux.Optimise.Descent,
+    "Momentum" => Flux.Optimise.Momentum,
+    "Nesterov" => Flux.Optimise.Nesterov,
+    "RMSProp" => Flux.Optimise.RMSProp,
+    "ADAM" => Flux.Optimise.ADAM,
+    "RADAM" => Flux.Optimise.RADAM,
+    "AdaMax" => Flux.Optimise.AdaMax,
+    "ADAGrad" => Flux.Optimise.ADAGrad,
+    "ADADelta" => Flux.Optimise.ADADelta,
+    "AMSGrad" => Flux.Optimise.AMSGrad,
+    "NADAM" => Flux.Optimise.NADAM,
+    "ADAMW" => Flux.Optimise.ADAMW,
+    "OADAM" => Flux.Optimise.OADAM,
+    "AdaBelief" => Flux.Optimise.AdaBelief,
+)

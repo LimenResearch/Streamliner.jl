@@ -20,8 +20,11 @@ Base.@kwdef struct Architecture
     num_epochs:: Union{Integer,Missing} = missing
     optimizier:: Union{String,Missing} = missing
     optimizer_params:: Union{Dict,Missing} = missing
+    loss:: Union{String,Missing} = missing
+    loss_params:: Union{Dict,Missing} = missing
     batch_size:: Union{Integer,Missing} = missing
     num_classes::Union{Integer,Missing} = missing
+    is_supervised::Bool = missing
 end
 
 function Architecture(path::String)
@@ -60,7 +63,25 @@ function build_layers(layer_params::Vector, input_size::Union{Vector, Array, Tup
 end
 
 get_model(architecture::Architecture) = Flux.Chain(architecture.layers...)
+function get_optimizer(architecture::Architecture)
+    # !!! TODO parameters must be ordered: this could make it difficult to
+    # generate cards automatially. Should we write kwargs-based constructors?
+    opt = string_to_optim[architecture.optimizer](architecture.optimizer_params["lr"])
+end
+
+function get_loss(architecture::Architecture)
+    # !!! TODO find a way to relax TOML's keys to accept greek characters.
+    # This would be useful for the nonlinearity (σ) and the loss' parameters.
+    model = get_model(architecture)
+    if architecture.is_supervised
+        loss_fun(x, y) = string_to_loss[architecture.loss](model(x), y)
+    else
+        loss_fun(x) = string_to_loss[architecture.loss](model(x))
+    end
+end
+
 
 # mlp = Architecture("../static/mlp.toml")
 # conv = Architecture("../static/conv.toml")
+# rnn = Architecture("../static/rnn.toml")
 # conv_class = Architecture("../static/conv_classifier.toml")

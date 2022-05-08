@@ -2,6 +2,9 @@
     num_epochs = 100
     optimizier = "adam"
     optimizer_params = {lr = 0.01}
+    loss = "logitcrossentropy"
+    loss_params = {dims = 1, agg = "mean"}
+    is_supervised = true
     batch_size = 32
 
 [architecture]
