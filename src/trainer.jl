@@ -1,4 +1,4 @@
-using Flux: gradient, params, update!
+using Flux: gradient, params, update!, throttle, train!
 using Flux: @epochs
 
 
@@ -7,12 +7,12 @@ function train(architecture::Architecture, train_loader, test_x, test_y)
     opt = get_optimizer(architecture)
     m = get_model(architecture)
     evalcallback() = @show(loss(test_x, test_y))
-    @epochs architecture.num_epochs Flux.train!(
+    @epochs architecture.num_epochs train!(
         loss,
-        Flux.params(m),
+        params(m),
         train_loader,
         opt,
-        cb = Flux.throttle(evalcallback, 5),
+        cb = throttle(evalcallback, 5),
     )
 end
 
