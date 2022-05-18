@@ -1,15 +1,30 @@
-function train(architecture::Architecture, data, test_data)
-    objective = get_loss(architecture)
+using Flux: gradient, params, update!
+using Flux: @epochs
+
+
+function train(architecture::Architecture, train_loader, test_x, test_y)
+    loss = get_loss(architecture)
     opt = get_optimizer(architecture)
-    if architecture.is_supervised
-        evalcb() = @show(loss(test_data...))
-    else
-        evalcb() = @show(loss(test_data))
-    end
+    m = get_model(architecture)
+    evalcallback() = @show(loss(test_x, test_y))
     @epochs architecture.num_epochs Flux.train!(
-        objective,
-        data,
+        loss,
+        Flux.params(m),
+        train_loader,
         opt,
-        cb = throttle(evalcb, 5),
+        cb = Flux.throttle(evalcallback, 5),
     )
+    
+    # epochs = architecture.num_epochs
+    # for epoch = 1:epochs
+    #     for d in train_loader
+    #         gs = gradient(Flux.params(m)) do
+    #         l = loss(d...)
+    #         println(l)
+    #         end
+    #         update!(opt, Flux.params(m), gs)
+    #     end
+    # # @show accuracy(valX, valY)
+    # end
 end
+

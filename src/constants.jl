@@ -1,5 +1,4 @@
 using Flux
-include("./resize_helper.jl")
 
 const layer_to_constructor = Dict(
     "dense" => Flux.Dense,

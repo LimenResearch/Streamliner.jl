@@ -3,6 +3,19 @@ uuid = "32326c28-9ac7-4954-b80e-c95a277351a4"
 authors = ["Beaver Research", "Mattia G. Bergomi", "Pietro Vertechi"]
 version = "0.1.0"
 
+[deps]
+CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
+Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
+ImageCore = "a09fc81d-aa75-5fe9-8630-4744c3626534"
+Images = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
+IterTools = "c8e1da08-722c-5040-9ed9-7db0dc04731e"
+JuliaFormatter = "98e50ef6-434e-11e9-1051-2b60c6c9e899"
+MLDatasets = "eb30cadb-4394-5ae3-aed4-317e484a6458"
+MLUtils = "f1d291b0-491e-4a28-83b9-f70985020b54"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+Primes = "27ebfcd6-29c5-5fa9-bf4b-fb8fc14df3ae"
+TOML = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
+
 [compat]
 julia = "1.7"
 

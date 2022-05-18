@@ -1,10 +1,4 @@
 using TOML
-using Flux
-using IterTools
-
-include("./constants.jl");
-include("./layer_constructors.jl");
-
 # When reading TOML files it seems dictionary keys are strings, but Symbols are 
 # needed to initialize structures from dict splat. Here is what I found people do.
 # TODO: Rewrite this in a better way (?)
@@ -18,28 +12,27 @@ Base.@kwdef struct Architecture
     input_size::Union{Vector, Array, Tuple}
     layers::Vector{Any} # TODO specify entry type (Flux?)
     num_epochs:: Union{Integer,Missing} = missing
-    optimizier:: Union{String,Missing} = missing
+    optimizer:: Union{String,Missing} = missing
     optimizer_params:: Union{Dict,Missing} = missing
     loss:: Union{String,Missing} = missing
     loss_params:: Union{Dict,Missing} = missing
     batch_size:: Union{Integer,Missing} = missing
     num_classes::Union{Integer,Missing} = missing
-    is_supervised::Bool = missing
+    is_supervised:: Union{Bool,Missing} = missing
 end
-
 function Architecture(path::String)
     d = TOML.parsefile(path)
     input_size = d["architecture"]["input_size"]
     layer_params = d["architecture"]["layers"]
     num_classes = get(d["architecture"], "num_classes", missing)
-    if num_classes !== missing && last(layers)["out"] != num_classes
+    if num_classes !== missing && last(layer_params)["out"] != num_classes
         @warn ("The output size of the last layer will be set to $num_classes 
                 to match the number of classes provided in the configuration file.")
         last(layer_params)["out"] = num_classes
     end
     layers = build_layers(layer_params, input_size)
     d["architecture"]["layers"] = layers
-    architecture = Architecture(; _makesymbol(d["architecture"])...)
+    architecture = Architecture(; _makesymbol(d["architecture"])..., _makesymbol(d["training"])...)
 end
 
 function build_layers(layer_params::Vector, input_size::Union{Vector, Array, Tuple})
@@ -66,7 +59,7 @@ get_model(architecture::Architecture) = Flux.Chain(architecture.layers...)
 function get_optimizer(architecture::Architecture)
     # !!! TODO parameters must be ordered: this could make it difficult to
     # generate cards automatially. Should we write kwargs-based constructors?
-    opt = string_to_optim[architecture.optimizer](architecture.optimizer_params["lr"])
+    opt = string_to_optim[architecture.optimizer](architecture.optimizer_params[:lr])
 end
 
 function get_loss(architecture::Architecture)

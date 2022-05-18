@@ -1,6 +1,6 @@
 [training]
     num_epochs = 100
-    optimizier = "adam"
+    optimizer = "ADAM"
     optimizer_params = {lr = 0.01}
     loss = "logitcrossentropy"
     loss_params = {dims = 1, agg = "mean"}
@@ -9,7 +9,7 @@
 
 [architecture]
     name = "conv_classifier_test"
-    input_size = [10, 10, 3]
+    input_size = [28, 28, 1]
     num_classes = 10
 
 layers = [

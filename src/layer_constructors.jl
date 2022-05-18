@@ -1,6 +1,3 @@
-using Flux
-using IterTools
-
 function Flux.Dense(l_params::Dict, input_size::Union{Tuple,Vector})
     out = l_params["out"]
     delete!(l_params, "out")

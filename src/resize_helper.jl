@@ -1,6 +1,3 @@
-using Flux
-using Primes
-
 function dense_to_conv(x::AbstractArray)
     factors = []
 
