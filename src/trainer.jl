@@ -14,17 +14,5 @@ function train(architecture::Architecture, train_loader, test_x, test_y)
         opt,
         cb = Flux.throttle(evalcallback, 5),
     )
-    
-    # epochs = architecture.num_epochs
-    # for epoch = 1:epochs
-    #     for d in train_loader
-    #         gs = gradient(Flux.params(m)) do
-    #         l = loss(d...)
-    #         println(l)
-    #         end
-    #         update!(opt, Flux.params(m), gs)
-    #     end
-    # # @show accuracy(valX, valY)
-    # end
 end
 
