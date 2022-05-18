@@ -1,12 +1,16 @@
 [training]
     num_epochs = 100
-    optimizier = "adam"
+    optimizer = "ADAM"
     optimizer_params = {lr = 0.01}
+    loss = "logitcrossentropy"
+    loss_params = {dims = 1, agg = "mean"}
+    is_supervised = true
     batch_size = 32
 
 [architecture]
-    name = "lstm_test"
-    input_size = [10]
+    name = "lstm_classifier_test"
+    input_size = [50]
+    num_classes = 10
 
 layers = [
     {f = "rnn", out=10, sigma="tanh"},

@@ -72,9 +72,3 @@ function get_loss(architecture::Architecture)
         loss_fun(x) = string_to_loss[architecture.loss](model(x))
     end
 end
-
-
-# mlp = Architecture("../static/mlp.toml")
-# conv = Architecture("../static/conv.toml")
-# rnn = Architecture("../static/rnn.toml")
-# conv_class = Architecture("../static/conv_classifier.toml")
