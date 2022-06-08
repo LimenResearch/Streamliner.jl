@@ -10,5 +10,6 @@ include("./resize_helper.jl");
 include("./constants.jl");
 include("./layer_constructors.jl");
 include("trainer.jl")
+include("model_warehouse.jl")
 
 end
