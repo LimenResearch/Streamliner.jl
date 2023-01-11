@@ -1,4 +1,4 @@
-using DlWrappers: Architecture, get_model
+using Streamliner: Architecture, get_model
 using Flux
 
 @testset "MLP test" begin

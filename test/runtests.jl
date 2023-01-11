@@ -1,7 +1,7 @@
-using DlWrappers
+using Streamliner
 using Test
 
-@testset "DlWrappers.jl" begin
+@testset "Streamliner.jl" begin
     include("./mlp.jl")
     include("./conv.jl")
 end

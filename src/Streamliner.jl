@@ -1,4 +1,4 @@
-module DlWrappers
+module Streamliner
 
 using TOML
 using Flux

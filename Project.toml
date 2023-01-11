@@ -1,6 +1,6 @@
-name = "DlWrappers"
+name = "Streamliner"
 uuid = "32326c28-9ac7-4954-b80e-c95a277351a4"
-authors = ["Beaver Research", "Mattia G. Bergomi", "Pietro Vertechi"]
+authors = ["Limen Research", "Mattia G. Bergomi", "Pietro Vertechi"]
 version = "0.1.0"
 
 [deps]
