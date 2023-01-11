@@ -1,5 +1,3 @@
-using Flux
-
 const layer_to_constructor = Dict(
     "dense" => Flux.Dense,
     "conv" => Flux.Conv,

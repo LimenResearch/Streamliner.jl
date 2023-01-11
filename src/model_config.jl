@@ -1,4 +1,3 @@
-using TOML
 # When reading TOML files it seems dictionary keys are strings, but Symbols are 
 # needed to initialize structures from dict splat. Here is what I found people do.
 # TODO: Rewrite this in a better way (?)
