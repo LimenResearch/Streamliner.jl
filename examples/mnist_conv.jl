@@ -12,7 +12,7 @@ function get_mnist()
     return train_x, train_y, test_x, test_y
 end
 
-architecture = DlWrappers.Architecture(joinpath(@__DIR__, "static/conv_classifier.toml"));
+architecture = DlWrappers.Architecture(joinpath(@__DIR__, "static/conv.toml"));
 train_x, train_y, test_x, test_y = get_mnist();
 train_loader = DataLoader((train_x, train_y); batchsize=architecture.batch_size, shuffle=true);
 DlWrappers.train(architecture, train_loader, test_x, test_y)
