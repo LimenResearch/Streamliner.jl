@@ -8,33 +8,48 @@ _makesymbol(D::Dict) = Dict(_makesymbol.([D...])...)
 
 Base.@kwdef struct Architecture
     name::String
-    input_size::Union{Vector, Array, Tuple}
-    layers::Vector{Any} # TODO specify entry type (Flux?)
-    num_epochs:: Union{Integer,Missing} = missing
-    optimizer:: Union{String,Missing} = missing
-    optimizer_params:: Union{Dict,Missing} = missing
-    loss:: Union{String,Missing} = missing
-    loss_params:: Union{Dict,Missing} = missing
-    batch_size:: Union{Integer,Missing} = missing
+    input_size::Union{Vector,Array,Tuple}
+    layers::Vector{Any}
+    submodules::Union{Vector{Any},Missing} = missing
+    num_epochs::Union{Integer,Missing} = missing
+    optimizer::Union{String,Missing} = missing
+    optimizer_params::Union{Dict,Missing} = missing
+    loss::Union{String,Missing} = missing
+    loss_params::Union{Dict,Missing} = missing
+    batch_size::Union{Integer,Missing} = missing
     num_classes::Union{Integer,Missing} = missing
-    is_supervised:: Union{Bool,Missing} = missing
+    is_supervised::Union{Bool,Missing} = missing
 end
+
 function Architecture(path::String)
     d = TOML.parsefile(path)
     input_size = d["architecture"]["input_size"]
-    layer_params = d["architecture"]["layers"]
+    layer_params = get(d["architecture"], "layers", missing)
+    submodules = get(d["architecture"], "submodules", missing)
     num_classes = get(d["architecture"], "num_classes", missing)
+    @assert layer_params !== missing || submodules !== missing "Provide layers or path to submodules"
     if num_classes !== missing && last(layer_params)["out"] != num_classes
         @warn ("The output size of the last layer will be set to $num_classes 
                 to match the number of classes provided in the configuration file.")
         last(layer_params)["out"] = num_classes
     end
-    layers = build_layers(layer_params, input_size)
-    d["architecture"]["layers"] = layers
-    architecture = Architecture(; _makesymbol(d["architecture"])..., _makesymbol(d["training"])...)
+    if layer_params !== missing
+        layers = build_layers(layer_params, input_size)
+        d["architecture"]["layers"] = layers
+        if haskey(d, "training")
+            architecture =
+                Architecture(; _makesymbol(d["architecture"])..., _makesymbol(d["training"])...)
+        else
+            architecture =
+                Architecture(; _makesymbol(d["architecture"])...)
+        end
+
+    else
+        sub_archs = Dict(submodule["name"] => Architecture(submodule["path"]) for submodule in submodules)
+    end   
 end
 
-function build_layers(layer_params::Vector, input_size::Union{Vector, Array, Tuple})
+function build_layers(layer_params::Vector, input_size::Union{Vector,Array,Tuple})
     layers = []
     prev_f = missing
 

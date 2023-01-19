@@ -1,0 +1,8 @@
+[architecture]
+    name = "decoder"
+    input_size = [2]
+
+layers = [
+    {f = "dense", out=10, sigma="identity"},
+    {f = "dense", out=50, sigma="relu"}
+]
