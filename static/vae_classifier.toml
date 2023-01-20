@@ -1,0 +1,20 @@
+[training]
+type = "vae"
+is_supervised = false
+
+
+[training.optimizer]
+name = "ADAM"
+params = { lr = 0.01 }
+
+[training.loss]
+name = "logitcrossentropy"
+params = { dims = 1, agg = "mean" }
+
+[training.data]
+num_epochs = 100
+batch_size = 32
+input_size = [28, 28, 1]
+
+[modules]
+paths = { encoder = "./static/encoder.toml", decoder = "./static/decoder.toml", latent = "./static/latent.toml" }
