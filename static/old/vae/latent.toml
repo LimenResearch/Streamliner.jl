@@ -1,7 +1,0 @@
-[architecture]
-    name = "latent"
-    input_size = [10]
-
-layers = [
-    {f = "dense", out=2, sigma="identity"},
-]

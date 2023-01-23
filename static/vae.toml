@@ -14,9 +14,9 @@ name = "ADAM"
 params = { lr = 0.01 }
 
 [training.loss]
-name = "logitcrossentropy"
-params = { dims = 1, agg = "mean" }
+name = "mse"
+beta=1.0
 
 [model]
-type = "sequential"
-paths = {sequential = "./static/conv.toml"}
+type = "vae"
+paths = {encoder = "./static/conv.toml", decoder = "./static/conv_d.toml", latent="./static/latent.toml"}

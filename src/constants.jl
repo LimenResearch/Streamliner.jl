@@ -1,3 +1,7 @@
+const model_to_constructor = Dict(
+    "sequential" => Sequential,
+    "vae"=> VAE)
+
 const layer_to_constructor = Dict(
     "dense" => Flux.Dense,
     "conv" => Flux.Conv,

@@ -4,8 +4,10 @@ _makesymbol(x) = x
 _makesymbol(p::Pair) = (Symbol(p.first) => _makesymbol(p.second))
 _makesymbol(D::Dict) = Dict(_makesymbol.([D...])...)
 
-struct EnrichedModel
-    metadata::Dict # training info
+abstract type AbstractEnrichedModel end
+
+struct EnrichedModel <: AbstractEnrichedModel
+    metadata::Dict # info
     optimizer::Any
     loss::Any
     model::Any
@@ -18,8 +20,7 @@ function EnrichedModel(path::String)
     info = _makesymbol(TOML.parsefile(path))
     optimizer = get_optimizer(info[:training][:optimizer])
     loss = get_loss(info[:training][:loss], info[:training][:task])
-    model = model_to_constructor[info[:model][:type]](info[:model][:paths],
-                                 info[:training])
+    model = model_to_constructor[info[:model][:type]](info[:model][:paths], info[:training])
     return EnrichedModel(info, optimizer, loss, model)
 end
 
@@ -37,9 +38,11 @@ function get_loss(loss_data::Dict, task_data::Dict)
     end
 end
 
-function build_layers(layer_params::Vector, input_size::Union{Vector,Array,Tuple})
+function build_layers(layer_params::Vector, input_size::Union{Vector,Tuple};
+                      prev_f = missing, last_layer_info=false,
+                      out_size::Union{Vector,Tuple}=missing)
     layers = []
-    prev_f = missing
+    cur_size = input_size
 
     for l_params in layer_params
         f = l_params["f"]
@@ -47,24 +50,32 @@ function build_layers(layer_params::Vector, input_size::Union{Vector,Array,Tuple
         if prev_f !== missing && reshape_layers[reduce_to_dense([prev_f, f])...] !== missing
             layer = reshape_layers[reduce_to_dense([prev_f, f])...]
             push!(layers, layer)
-            input_size = get_output_size(layer, input_size)
+            cur_size = get_output_size(layer, cur_size)
         end
         prev_f = f
-        layer = layer_to_constructor[f](l_params, input_size)
+        layer = layer_to_constructor[f](l_params, cur_size)
         push!(layers, layer)
-        input_size = get_output_size(layer, input_size)
+        cur_size = get_output_size(layer, cur_size)
     end
+    if out_size !== missing && cur_size !== out_size
+        @warn "The last layer size ($cur_size) does not match the provided out_size $out_size. An resampling layer shall be added"
+        push(layers, Flux.Upsample(:nearest, size=out_size[1:lastindex(out_size)-1]))
+    end
+    if last_layer_info
+        return layers, cur_size, f
     return layers
 end
 
-struct Sequential
-    layers::Vector
-end
+parse_architecture(path_dict::Dict, key::String) = 
+    _makesymbol(TOML.parsefile(path_dict[key]))
 
-function Sequential(paths::Vector, metadata::Dict)
-    input_size = metadata[:data][:input_size]
-    layer_params = _makesymbol(TOML.parsefile(paths[1]["layers"]))
-    return Flux.Chain(build_layers(layer_params[:layers], input_size)...)
-end
+to_chain(params::Dict, input_size::Union{Vector,Tuple};
+         prev_f = missing, last_layer_info=false) =
+    Flux.Chain(build_layers(params[:layers], input_size;
+               last_layer_info=last_layer_info, prev_f = prev_f)...)
 
-const model_to_constructor = Dict("sequential" => Sequential)
+function to_chain(path_dict::Dict, key::String, input_size::Union{Vector,Tuple};
+                  prev_f = missing, last_layer_info=false)
+    params = parse_architecture(path_dict, key)
+    return to_chain(params, input_size; last_layer_info=last_layer_info, prev_f = prev_f)
+end

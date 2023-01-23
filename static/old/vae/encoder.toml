@@ -1,8 +1,0 @@
-[architecture]
-    name = "encoder"
-    input_size = [50]
-
-layers = [
-    {f = "dense", out=100, sigma="identity"},
-    {f = "dense", out=10, sigma="relu"}
-]
