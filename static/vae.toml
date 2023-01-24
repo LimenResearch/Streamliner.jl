@@ -4,17 +4,16 @@
 num_epochs = 100
 batch_size = 32
 input_size = [28, 28, 1]
-num_classes = 10
 
 [training.task]
-supervised = true
+supervised = false
 
 [training.optimizer]
 name = "ADAM"
 params = { lr = 0.01 }
 
 [training.loss]
-name = "mse"
+name = "vae_loss"
 beta=1.0
 
 [model]

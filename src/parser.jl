@@ -47,8 +47,12 @@ function build_layers(layer_params::Vector, input_size::Union{Vector,Tuple};
     for l_params in layer_params
         f = l_params["f"]
         delete!(l_params, "f")
-        if prev_f !== missing && reshape_layers[reduce_to_dense([prev_f, f])...] !== missing
-            layer = reshape_layers[reduce_to_dense([prev_f, f])...]
+        if prev_f !== missing 
+            if (reshape_layers[reduce_to_dense([prev_f, f])...] !== missing)
+                layer = reshape_layers[reduce_to_dense([prev_f, f])...]
+            else (reshape_layers[reduce_to_conv([prev_f, f])...] !== missing)
+                layer = reshape_layers[reduce_to_conv([prev_f, f])...]
+            end
             push!(layers, layer)
             cur_size = get_output_size(layer, cur_size)
         end

@@ -1,0 +1,1 @@
+layers = [{f = "dense", out=10, sigma="relu"}]

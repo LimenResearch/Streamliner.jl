@@ -20,7 +20,15 @@ function(m::VAE)(x)
     logvar = m.encoder_logvar(x)
     σ = exp(0.5 * logvar)
     ϵ = randn(size(σ))
-    z = ϵ * σ + μ
+    z = ϵ .* σ + μ
     x̂ = m.decoder(z)
-    return x̂, μ, σ
+    return x̂, μ, logvar
+end
+
+function vae_loss(x, x̂, μ, logvar, β)
+    # TODO: this loss is extremely basic. It should be improved, e.g., 
+    # regularization
+    rec =Flux.Losses.mse(x̂, x)
+    kld = mean(-0.5 * sum(1 + logvar - μ^2 - logvar.exp(), dim = 2), dim = 1)
+    return rec + β * kld
 end
