@@ -37,7 +37,7 @@ end
 
 function build_layers(layer_params::Vector, input_size::Union{Vector,Tuple};
                       prev_f = missing, last_layer_info=false,
-                      out_size::Union{Vector,Tuple}=missing)
+                      out_size::Union{Vector,Tuple,Missing}=missing)
     layers = []
     cur_size = input_size
 
@@ -45,13 +45,16 @@ function build_layers(layer_params::Vector, input_size::Union{Vector,Tuple};
         f = l_params["f"]
         delete!(l_params, "f")
         if prev_f !== missing 
+            # TODO rewrite the following if elseif horror
             if (reshape_layers[reduce_to_dense([prev_f, f])...] !== missing)
                 layer = reshape_layers[reduce_to_dense([prev_f, f])...]
-            else (reshape_layers[reduce_to_conv([prev_f, f])...] !== missing)
+                push!(layers, layer)
+                cur_size = get_output_size(layer, cur_size)
+            elseif (reshape_layers[reduce_to_conv([prev_f, f])...] !== missing)
                 layer = reshape_layers[reduce_to_conv([prev_f, f])...]
+                push!(layers, layer)
+                cur_size = get_output_size(layer, cur_size)
             end
-            push!(layers, layer)
-            cur_size = get_output_size(layer, cur_size)
         end
         prev_f = f
         layer = layer_to_constructor[f](l_params, cur_size)
@@ -68,15 +71,15 @@ function build_layers(layer_params::Vector, input_size::Union{Vector,Tuple};
     return layers
 end
 
-parse_architecture(path_dict::Dict, key::String) = 
+parse_architecture(path_dict::Dict, key::Union{String,Symbol}) = 
     _makesymbol(TOML.parsefile(path_dict[key]))
 
 to_chain(params::Dict, input_size::Union{Vector,Tuple};
          prev_f = missing, last_layer_info=false) =
     Flux.Chain(build_layers(params[:layers], input_size;
-               last_layer_info=last_layer_info, prev_f = prev_f)...)
+               last_layer_info=last_layer_info, prev_f = prev_f))
 
-function to_chain(path_dict::Dict, key::String, input_size::Union{Vector,Tuple};
+function to_chain(path_dict::Dict, key::Union{String, Symbol}, input_size::Union{Vector,Tuple};
                   prev_f = missing, last_layer_info=false)
     params = parse_architecture(path_dict, key)
     return to_chain(params, input_size; last_layer_info=last_layer_info, prev_f = prev_f)
