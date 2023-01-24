@@ -24,10 +24,9 @@ function(m::VAE)(x)
     return (x, x̂, μ, logvar)
 end
 
-function vae_loss(out; beta=1.0)
+function vae_loss(x, x̂, μ, logvar; beta=1.0)
     # TODO: this loss is extremely basic. It should be improved, e.g., 
     # regularization
-    x, x̂, μ, logvar = out
     rec =Flux.Losses.mse(x̂, x)
     kld = mean(-0.5 * sum(1 + logvar - μ^2 - exp(logvar), dim = 2), dim = 1)
     return rec + beta * kld
