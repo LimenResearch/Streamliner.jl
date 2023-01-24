@@ -58,7 +58,7 @@ function build_layers(layer_params::Vector, input_size::Union{Vector,Tuple};
         cur_size = get_output_size(layer, cur_size)
     end
     if out_size !== missing && cur_size !== out_size
-        @warn "The last layer size ($cur_size) does not match the provided out_size $out_size. An resampling layer shall be added"
+        @warn "The last layer size ($cur_size) does not match the provided out_size $out_size. A resampling layer shall be added"
         push(layers, Flux.Upsample(:nearest, size=out_size[1:lastindex(out_size)-1]))
     end
     if last_layer_info
