@@ -31,15 +31,17 @@ end
 function get_loss(loss_data::Dict, task_data::Dict)
     # !!! TODO find a way to relax TOML's keys to accept greek characters.
     # This would be useful for the nonlinearity (σ) and the loss' parameters.
-    if task_data[:supervised]
-        loss_fun(ŷ, y) = string_to_loss[loss_data[:name]](ŷ, y; loss_data[:params]...)
-    else
-        if occursin("vae", loss_data[:name])
-           loss_fun(x, x̂, μ, logvar) = string_to_loss[loss_data[:name]](x, x̂, μ, logvar; loss_data[:params])
-        else
-            loss_fun(ŷ) = string_to_loss[loss_data[:name]](ŷ; loss_data[:params]...)
-        end
-    end
+    loss_fun(args...) = string_to_loss[loss_data[:name]](args...; loss_data[:params]...)
+    return loss_fun # for clarity, not necessary
+#     if task_data[:supervised]
+#         loss_fun(ŷ, y) = string_to_loss[loss_data[:name]](ŷ, y; loss_data[:params]...)
+#     else
+#         if occursin("vae", loss_data[:name])
+#            loss_fun(x, x̂, μ, logvar) = string_to_loss[loss_data[:name]](x, x̂, μ, logvar; loss_data[:params])
+#         else
+#             loss_fun(ŷ) = string_to_loss[loss_data[:name]](ŷ; loss_data[:params]...)
+#         end
+#     end
 end
 
 function build_layers(layer_params::Vector, input_size::Union{Vector,Tuple};
