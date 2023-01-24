@@ -14,7 +14,7 @@ params = { lr = 0.01 }
 
 [training.loss]
 name = "vae_loss"
-beta=1.0
+params = {beta=1.0}
 
 [model]
 type = "vae"
