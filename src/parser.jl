@@ -19,7 +19,7 @@ end
 function EnrichedModel(path::String)
     info = _makesymbol(TOML.parsefile(path))
     optimizer = get_optimizer(info[:training][:optimizer])
-    loss = get_loss(info[:training][:loss], info[:training][:task])
+    loss = get_loss(info[:training][:loss])
     model = model_to_constructor[info[:model][:type]](info[:model][:paths], info[:training])
     return EnrichedModel(info, optimizer, loss, model)
 end
@@ -28,20 +28,11 @@ function get_optimizer(opt_data::Dict)
     opt = string_to_optim[opt_data[:name]](opt_data[:params][:lr])
 end
 
-function get_loss(loss_data::Dict, task_data::Dict)
+function get_loss(loss_data::Dict)
     # !!! TODO find a way to relax TOML's keys to accept greek characters.
     # This would be useful for the nonlinearity (σ) and the loss' parameters.
     loss_fun(args...) = string_to_loss[loss_data[:name]](args...; loss_data[:params]...)
     return loss_fun # for clarity, not necessary
-#     if task_data[:supervised]
-#         loss_fun(ŷ, y) = string_to_loss[loss_data[:name]](ŷ, y; loss_data[:params]...)
-#     else
-#         if occursin("vae", loss_data[:name])
-#            loss_fun(x, x̂, μ, logvar) = string_to_loss[loss_data[:name]](x, x̂, μ, logvar; loss_data[:params])
-#         else
-#             loss_fun(ŷ) = string_to_loss[loss_data[:name]](ŷ; loss_data[:params]...)
-#         end
-#     end
 end
 
 function build_layers(layer_params::Vector, input_size::Union{Vector,Tuple};
