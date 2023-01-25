@@ -63,10 +63,10 @@ function build_layers(layer_params::Vector, input_size::Union{Vector,Tuple};
     end
     if out_size !== missing && cur_size !== out_size
         @warn "The last layer size ($cur_size) does not match the provided out_size $out_size. A resampling layer shall be added"
-        push(layers, Flux.Upsample(:nearest, size=out_size[1:lastindex(out_size)-1]))
+        push!(layers, Flux.Upsample(:nearest, size=out_size[1:lastindex(out_size)-1]))
     end
     if last_layer_info
-        return layers, cur_size, f
+        return layers, cur_size, prev_f
     end
     return layers
 end
@@ -75,12 +75,13 @@ parse_architecture(path_dict::Dict, key::Union{String,Symbol}) =
     _makesymbol(TOML.parsefile(path_dict[key]))
 
 to_chain(params::Dict, input_size::Union{Vector,Tuple};
-         prev_f = missing, last_layer_info=false) =
+         prev_f = missing, last_layer_info=false, out_size=missing) =
     Flux.Chain(build_layers(params[:layers], input_size;
-               last_layer_info=last_layer_info, prev_f = prev_f))
+               last_layer_info=last_layer_info, prev_f = prev_f, out_size=out_size))
 
 function to_chain(path_dict::Dict, key::Union{String, Symbol}, input_size::Union{Vector,Tuple};
-                  prev_f = missing, last_layer_info=false)
+                  prev_f = missing, last_layer_info=false, out_size=missing)
     params = parse_architecture(path_dict, key)
-    return to_chain(params, input_size; last_layer_info=last_layer_info, prev_f = prev_f)
+    println("In to chain with parsing. Parsed params are $params")
+    return to_chain(params, input_size; last_layer_info=last_layer_info, prev_f = prev_f, out_size=out_size)
 end

@@ -10,9 +10,9 @@ function VAE(paths::Dict, metadata::Dict)
     println(paths)
     input_size = metadata[:data][:input_size]
     e, out_size, ll = to_chain(paths, :encoder, input_size; last_layer_info=true)
-    l, out_size, ll = to_chain(paths, "latent", out_size; prev_f=ll, last_layer_info=true)
-    d, out_size, ll = to_chain(paths, "decoder", out_size; prev_f=ll, last_layer_info=true, out_size=input_size)
-    return VAE(e, e, l, d, metadata[:loss][:params]["beta"])
+    l, out_size, ll = to_chain(paths, :latent, out_size; prev_f=ll, last_layer_info=true)
+    d, out_size, ll = to_chain(paths, :decoder, out_size; prev_f=ll, last_layer_info=true, out_size=input_size)
+    return VAE(e, e, l, d, metadata[:loss][:params][:beta])
 end
 
 function(m::VAE)(x)

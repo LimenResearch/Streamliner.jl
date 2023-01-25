@@ -22,6 +22,7 @@ reduce_to_conv(list::Vector) = reduce_to_conv.(list)
 const reshape_layers = Dict(
     ("dense", "dense") => missing,
     ("conv", "conv") => missing,
+    ("conv_t", "conv_t") => missing,
     ("conv", "dense") => Flux.flatten,
     ("dense", "conv") => dense_to_conv,
     ("conv_t", "dense") => Flux.flatten,
