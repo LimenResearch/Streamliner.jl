@@ -42,8 +42,7 @@ function build_layers(layer_params::Vector, input_size::Union{Vector,Tuple};
     cur_size = input_size
 
     for l_params in layer_params
-        f = l_params["f"]
-        delete!(l_params, "f")
+        f = pop!(l_params, "f")
         if prev_f !== missing 
             # TODO rewrite the following if elseif horror
             if (reshape_layers[reduce_to_dense([prev_f, f])...] !== missing)
@@ -57,7 +56,7 @@ function build_layers(layer_params::Vector, input_size::Union{Vector,Tuple};
             end
         end
         prev_f = f
-        layer = layer_to_constructor[f](l_params, cur_size)
+        layer = consume!(layer_to_constructor[f], l_params, cur_size)
         push!(layers, layer)
         cur_size = get_output_size(layer, cur_size)
     end
