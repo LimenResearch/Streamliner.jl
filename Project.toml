@@ -18,7 +18,7 @@ Primes = "27ebfcd6-29c5-5fa9-bf4b-fb8fc14df3ae"
 TOML = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
 
 [compat]
-BSON =  "0.3"
+BSON = "0.3"
 CUDA = "3.12"
 Flux = "0.13"
 ImageCore = "0.9"

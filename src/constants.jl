@@ -2,23 +2,13 @@ const model_to_constructor = Dict(
     "sequential" => Sequential,
     "vae"=> VAE)
 
-    # We should rething the two following dictionaries to make it easier.
-const string_to_layer = Dict(
-    "dense" => Flux.Dense,
-    "conv" => Flux.Conv,
-    "conv_t" => Flux.ConvTranspose,
-    "rnn" => Flux.RNN,
-    "lstm" => Flux.LSTM,
-    "gru" => Flux.GRU,
-    )
-
 const string_to_constructor = Dict(
     "dense" => build_dense!,
-    "conv" => build_conv_like!,
-    "conv_t" => build_conv_like!,
+    "conv" => build_conv!,
+    "conv_t" => build_conv_t!,
     "rnn" => build_rnn!,
-    "lstm" => build_lstm_like!,
-    "gru" => build_lstm_like!,
+    "lstm" => build_lstm!,
+    "gru" => build_gru!,
 )
 
 const dense_like = ["dense", "rnn", "lstm", "gru"]
