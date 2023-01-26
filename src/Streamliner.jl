@@ -9,9 +9,9 @@ using Primes
 include("models/sequential.jl")
 include("models/vae.jl")
 include("parser.jl")
+include("layer_constructors.jl")
 include("resize_helper.jl")
 include("constants.jl")
-include("layer_constructors.jl")
 # include("trainer.jl")
 # include("model_warehouse.jl")
 

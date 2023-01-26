@@ -56,7 +56,7 @@ function build_layers(layer_params::Vector, input_size::Union{Vector,Tuple};
             end
         end
         prev_f = f
-        layer = consume!(layer_to_constructor[f], l_params, cur_size)
+        layer = string_to_constructor[f](f, l_params, cur_size)
         push!(layers, layer)
         cur_size = get_output_size(layer, cur_size)
     end
