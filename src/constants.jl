@@ -1,21 +1,32 @@
-const layer_to_constructor = Dict(
-    "dense" => Flux.Dense,
-    "conv" => Flux.Conv,
-    "rnn" => Flux.RNN,
-    "lstm" => Flux.LSTM,
-    "gru" => Flux.GRU,
-    )
+const model_to_constructor = Dict(
+    "sequential" => Sequential,
+    "vae"=> VAE)
+
+const string_to_constructor = Dict(
+    "dense" => build_dense!,
+    "conv" => build_conv!,
+    "conv_t" => build_conv_t!,
+    "rnn" => build_rnn!,
+    "lstm" => build_lstm!,
+    "gru" => build_gru!,
+)
 
 const dense_like = ["dense", "rnn", "lstm", "gru"]
+const conv_like = ["conv", "conv_t"]
 
 reduce_to_dense(name::String) = ifelse(name in dense_like, "dense", name)
 reduce_to_dense(list::Vector) = reduce_to_dense.(list)
+reduce_to_conv(name::String) = ifelse(name in conv_like, "conv", name)
+reduce_to_conv(list::Vector) = reduce_to_conv.(list)
 
 const reshape_layers = Dict(
     ("dense", "dense") => missing,
     ("conv", "conv") => missing,
+    ("conv_t", "conv_t") => missing,
     ("conv", "dense") => Flux.flatten,
-    ("dense", "conv") => dense_to_conv
+    ("dense", "conv") => dense_to_conv,
+    ("conv_t", "dense") => Flux.flatten,
+    ("dense", "conv_t") => dense_to_conv,
 )
 
 const string_to_sigma = Dict(
@@ -68,6 +79,7 @@ const string_to_loss = Dict(
     "binary_focal_loss" => Flux.Losses.binary_focal_loss,
     "focal_loss" => Flux.Losses.focal_loss,
     "siamese_contrastive_loss" => Flux.Losses.siamese_contrastive_loss,
+    "vae_loss" => vae_loss
 )
 
 const string_to_optim = Dict(

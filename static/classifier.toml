@@ -4,18 +4,19 @@
 num_epochs = 100
 batch_size = 32
 input_size = [28, 28, 1]
+num_classes = 10
 
 [training.task]
-supervised = false
+supervised = true
 
 [training.optimizer]
 name = "ADAM"
 params = { lr = 0.01 }
 
 [training.loss]
-name = "vae_loss"
-params = {beta=1.0}
+name = "logitcrossentropy"
+params = { dims = 1, agg = "mean" }
 
 [model]
-type = "vae"
-paths = {encoder = "./static/conv.toml", decoder = "./static/conv_d.toml", latent="./static/latent.toml"}
+type = "sequential"
+paths = {sequential = "./static/conv.toml"}

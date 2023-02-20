@@ -1,42 +1,42 @@
-function Flux.Dense(l_params::Dict, input_size::Union{Tuple,Vector})
-    out = l_params["out"]
-    delete!(l_params, "out")
-    σ = string_to_sigma[l_params["sigma"]]
-    delete!(l_params, "sigma")
-    layer = Dense(input_size[1], out, σ; _makesymbol(l_params)...)
+function build_dense!(f::String, l_params::Dict, input_size::Union{Tuple,Vector})
+    out = pop!(l_params, "out")
+    σ = string_to_sigma[pop!(l_params,"sigma")]
+    return Flux.Dense(input_size[1], out, σ; _makesymbol(l_params)...)
 end
 
-function Flux.Conv(l_params::Dict, input_size::Union{Tuple,Vector})
-    """l_params can heave keys:
-    filter, out, σ = identity, stride = 1, pad = 0, dilation = 1, groups = 1,
-    bias=true, init=glorot_uniform
-    """
+function build_convlike!(l_params::Dict, input_size::Union{Tuple,Vector}; layer)
     in_ch = last(input_size)
-    out_ch = l_params["out"]
-    delete!(l_params, "out")
-    filter = Tuple(Integer(k) for k in l_params["filter"])
-    delete!(l_params, "filter")
-    σ = string_to_sigma[l_params["sigma"]]
-    delete!(l_params, "sigma")
-    layer = Conv(filter, in_ch => out_ch, σ; _makesymbol(l_params)...)
+    out_ch = pop!(l_params, "out")
+    filter = Tuple(Integer(k) for k in pop!(l_params, "filter"))
+    σ = string_to_sigma[pop!(l_params,"sigma")]
+    return layer(filter, in_ch => out_ch, σ; _makesymbol(l_params)...)
 end
 
-function Flux.RNN(l_params::Dict, input_size::Union{Tuple,Vector})
-    # TODO: This constructor behaves exactly as dense. We could implement a DenseLike
-    # constructor.
-    out = l_params["out"]
-    delete!(l_params, "out")
-    σ = string_to_sigma[l_params["sigma"]]
-    delete!(l_params, "sigma")
-    layer = RNN(input_size[1], out, σ; _makesymbol(l_params)...)
+function build_conv!(l_params::Dict, input_size::Union{Tuple,Vector})
+    build_convlike!(l_params::Dict, input_size::Union{Tuple,Vector}; layer=Flux.Conv)
 end
 
-function Flux.LSTM(l_params::Dict, input_size::Union{Tuple,Vector})
-    layer = LSTM(input_size[1], l_params["out"])
+function build_conv_t!(l_params::Dict, input_size::Union{Tuple,Vector})
+    build_convlike!(l_params::Dict, input_size::Union{Tuple,Vector}; layer=Flux.ConvTranspose)
 end
 
-function Flux.GRU(l_params::Dict, input_size::Union{Tuple,Vector})
-    layer = GRU(input_size[1], l_params["out"])
+function build_rnn!(l_params::Dict, input_size::Union{Tuple,Vector})
+    out = pop!(l_params, "out")
+    σ = string_to_sigma[pop!(l_params,"sigma")]
+    return Flux.RNN(input_size[1], out, σ; _makesymbol(l_params)...)
+end
+
+function build_lstmlike!(l_params::Dict, input_size::Union{Tuple,Vector}; layer)
+    out = pop!(l_params, "out")
+    return layer(input_size[1], out)
+end
+
+function build_lstm!(l_params::Dict, input_size::Union{Tuple,Vector})
+    build_lstmlike!(l_params::Dict, input_size::Union{Tuple,Vector}; layer=Flux.LSTM)
+end
+
+function build_gru!(l_params::Dict, input_size::Union{Tuple,Vector})
+    build_lstmlike!(l_params::Dict, input_size::Union{Tuple,Vector}; layer=Flux.GRU)
 end
 
 function get_output_size(layer, input_size::Union{Vector, Tuple})
