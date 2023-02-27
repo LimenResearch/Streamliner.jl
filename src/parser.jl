@@ -11,6 +11,7 @@ struct EnrichedModel <: AbstractEnrichedModel
     optimizer::Any
     loss::Any
     model::Any
+    num_epochs::Integer
 end
 
 @functor EnrichedModel (model,)
@@ -20,8 +21,9 @@ function EnrichedModel(path::String)
     info = _makesymbol(TOML.parsefile(path))
     optimizer = get_optimizer(info[:training][:optimizer])
     loss = get_loss(info[:training][:loss])
+    num_epochs = info[:training][:num_epochs]
     model = model_to_constructor[info[:model][:type]](info[:model][:paths], info[:training])
-    return EnrichedModel(info, optimizer, loss, model)
+    return EnrichedModel(info, optimizer, loss, model, num_epochs)
 end
 
 function get_optimizer(opt_data::Dict)
