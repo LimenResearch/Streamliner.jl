@@ -1,4 +1,4 @@
-function build_dense!(f::String, l_params::Dict, input_size::Union{Tuple,Vector})
+function build_dense!(l_params::Dict, input_size::Union{Tuple,Vector})
     out = pop!(l_params, "out")
     σ = string_to_sigma[pop!(l_params,"sigma")]
     return Flux.Dense(input_size[1], out, σ; _makesymbol(l_params)...)
