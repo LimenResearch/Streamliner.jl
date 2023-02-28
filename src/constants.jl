@@ -9,10 +9,14 @@ const string_to_constructor = Dict(
     "rnn" => build_rnn!,
     "lstm" => build_lstm!,
     "gru" => build_gru!,
+    "dpm" => build_densemachine!,
+    "cpm" => build_convmachine!,
+    "tpm" => build_timemachine!
 )
 
 const dense_like = ["dense", "rnn", "lstm", "gru"]
 const conv_like = ["conv", "conv_t"]
+const pm_like = ["dpm", "cpm", "tpm"]
 
 reduce_to_dense(name::String) = ifelse(name in dense_like, "dense", name)
 reduce_to_dense(list::Vector) = reduce_to_dense.(list)
