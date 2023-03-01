@@ -38,21 +38,17 @@ function get_loss(loss_data::Dict)
 end
 
 function build_layers(layer_params::Vector, input_size::Union{Vector,Tuple};
-                      prev_f = missing, last_layer_info=false,
-                      out_size::Union{Vector,Tuple,Missing}=missing)
+                      prev_f = nothing, last_layer_info=false,
+                      out_size::Union{Vector,Tuple,Nothing}=nothing)
     layers = []
     cur_size = input_size
 
     for l_params in layer_params
         f = pop!(l_params, "f")
-        if prev_f !== missing 
-            # TODO rewrite the following if elseif horror
-            if (reshape_layers[reduce_to_dense([prev_f, f])...] !== missing)
-                layer = reshape_layers[reduce_to_dense([prev_f, f])...]
-                push!(layers, layer)
-                cur_size = get_output_size(layer, cur_size)
-            elseif (reshape_layers[reduce_to_conv([prev_f, f])...] !== missing)
-                layer = reshape_layers[reduce_to_conv([prev_f, f])...]
+        if prev_f !== nothing 
+            reshaper = get(reshape_layers, reduce_layer([prev_f, f]), nothing)
+            if !isnothing(reshaper)
+                layer = reshaper
                 push!(layers, layer)
                 cur_size = get_output_size(layer, cur_size)
             end
@@ -62,7 +58,7 @@ function build_layers(layer_params::Vector, input_size::Union{Vector,Tuple};
         push!(layers, layer)
         cur_size = get_output_size(layer, cur_size)
     end
-    if out_size !== missing && cur_size !== out_size
+    if !isnothing(out_size) && cur_size !== out_size
         @warn "The last layer size ($cur_size) does not match the provided out_size $out_size. A resampling layer shall be added"
         push!(layers, Flux.Upsample(:nearest, size=out_size[1:lastindex(out_size)-1]))
     end
