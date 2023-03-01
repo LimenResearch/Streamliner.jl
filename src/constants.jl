@@ -14,19 +14,24 @@ const string_to_constructor = Dict(
     "tpm" => build_timemachine!
 )
 
-const dense_like = ["dense", "rnn", "lstm", "gru"]
-const conv_like = ["conv", "conv_t"]
-const pm_like = ["dpm", "cpm", "tpm"]
+const dense_like = ["dense", "rnn", "lstm", "gru", "dpm"]
+const conv_like = ["conv", "conv_t", "cpm", "rpm"]
 
-reduce_to_dense(name::String) = ifelse(name in dense_like, "dense", name)
-reduce_to_dense(list::Vector) = reduce_to_dense.(list)
-reduce_to_conv(name::String) = ifelse(name in conv_like, "conv", name)
-reduce_to_conv(list::Vector) = reduce_to_conv.(list)
+function reduce_layer(name::String)
+    if name in dense_like
+        return "dense"
+    elseif name in conv_like
+        return "conv"
+    end
+    return name
+end
+
+reduce_layer(list::Vector) = Tuple(reduce_layer.(list))
 
 const reshape_layers = Dict(
-    ("dense", "dense") => missing,
-    ("conv", "conv") => missing,
-    ("conv_t", "conv_t") => missing,
+    ("dense", "dense") => nothing,
+    ("conv", "conv") => nothing,
+    ("conv_t", "conv_t") => nothing,
     ("conv", "dense") => Flux.flatten,
     ("dense", "conv") => dense_to_conv,
     ("conv_t", "dense") => Flux.flatten,
