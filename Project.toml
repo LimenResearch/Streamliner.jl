@@ -22,7 +22,7 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 [compat]
 BSON = "0.3"
 CUDA = "3.12"
-Flux = "0.12, 0.13"
+Flux = "0.13"
 ImageCore = "0.9"
 Images = "0.25"
 IterTools = "1.4"
