@@ -14,8 +14,8 @@ const string_to_constructor = Dict(
     "tpm" => build_timemachine!
 )
 
-const dense_like = ["dense", "rnn", "lstm", "gru", "dpm"]
-const conv_like = ["conv", "conv_t", "cpm", "rpm"]
+const dense_like = ["dense", "rnn", "lstm", "gru", "dpm", "rpm"]
+const conv_like = ["conv", "conv_t", "cpm"]
 
 function reduce_layer(name::String)
     if name in dense_like

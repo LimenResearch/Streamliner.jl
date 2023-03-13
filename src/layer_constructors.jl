@@ -60,7 +60,7 @@ function build_timemachine!(l_params::Dict, input_size::Union{Tuple,Vector})
     out = pop!(l_params, "out")
     dims = append!([in_dim], out)
     σ = string_to_sigma[pop!(l_params,"sigma")]
-    pad = Tuple(pop!(l_params, "pad"))
+    pad = pop!(l_params, "pad")
     timeblock = pop!(l_params, "timeblock")
     RecurMachine(dims, σ; pad=pad, timeblock=timeblock)
 end

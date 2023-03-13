@@ -1,6 +1,6 @@
 layers = [
     {f = "conv", out=10, filter=[5,5], sigma="relu"},
     {f = "conv", out=3, filter=[5,5], sigma="relu"},
-    {f = "cpm", out=[2,2,2], sigma="relu", pad=[3,3,3,3]},
+    {f = "rpm", out=[2,2,2], sigma="relu", pad=3, timeblock=3},
     {f = "dense", out=10, sigma="relu"}
 ]
