@@ -21,7 +21,7 @@ function EnrichedModel(path::String)
     info = _makesymbol(TOML.parsefile(path))
     optimizer = get_optimizer(info[:training][:optimizer])
     loss = get_loss(info[:training][:loss])
-    num_epochs = info[:training][:num_epochs]
+    num_epochs = info[:training][:data][:num_epochs]
     model = model_to_constructor[info[:model][:type]](info[:model][:paths], info[:training])
     return EnrichedModel(info, optimizer, loss, model, num_epochs)
 end
@@ -72,12 +72,12 @@ parse_architecture(path_dict::Dict, key::Union{String,Symbol}) =
     _makesymbol(TOML.parsefile(path_dict[key]))
 
 to_chain(params::Dict, input_size::Union{Vector,Tuple};
-         prev_f = missing, last_layer_info=false, out_size=missing) =
+         prev_f=nothing, last_layer_info=false, out_size=nothing) =
     Flux.Chain(build_layers(params[:layers], input_size;
                last_layer_info=last_layer_info, prev_f = prev_f, out_size=out_size))
 
 function to_chain(path_dict::Dict, key::Union{String, Symbol}, input_size::Union{Vector,Tuple};
-                  prev_f = missing, last_layer_info=false, out_size=missing)
+                  prev_f=nothing, last_layer_info=false, out_size=nothing)
     params = parse_architecture(path_dict, key)
     println("In to chain with parsing. Parsed params are $params")
     return to_chain(params, input_size; last_layer_info=last_layer_info, prev_f = prev_f, out_size=out_size)
