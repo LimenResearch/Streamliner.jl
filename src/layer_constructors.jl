@@ -39,6 +39,32 @@ function build_gru!(l_params::Dict, input_size::Union{Tuple,Vector})
     build_lstmlike!(l_params::Dict, input_size::Union{Tuple,Vector}; layer=Flux.GRU)
 end
 
+function build_densemachine!(l_params::Dict, input_size::Union{Tuple,Vector})
+    in_dim = last(input_size)
+    out = pop!(l_params, "out")
+    dims = append!([in_dim], out)
+    DenseMachine(dims, σ)
+end
+
+function build_convmachine!(l_params::Dict, input_size::Union{Tuple,Vector})
+    in_dim = last(input_size)
+    out = pop!(l_params, "out")
+    dims = append!([in_dim], out)
+    σ = string_to_sigma[pop!(l_params,"sigma")]
+    pad = Tuple(pop!(l_params, "pad"))
+    ConvMachine(dims, σ; pad=pad)
+end
+
+function build_timemachine!(l_params::Dict, input_size::Union{Tuple,Vector})
+    in_dim = last(input_size)
+    out = pop!(l_params, "out")
+    dims = append!([in_dim], out)
+    σ = string_to_sigma[pop!(l_params,"sigma")]
+    pad = pop!(l_params, "pad")
+    timeblock = pop!(l_params, "timeblock")
+    RecurMachine(dims, σ; pad=pad, timeblock=timeblock)
+end
+
 function get_output_size(layer, input_size::Union{Vector, Tuple})
     dummy = rand(Float32, tuple(input_size...,1)...)
     output_size = layer(dummy) |> size

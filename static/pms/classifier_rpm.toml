@@ -1,0 +1,22 @@
+[training]
+
+[training.data]
+num_epochs = 100
+batch_size = 32
+input_size = [28, 28, 1]
+num_classes = 10
+
+[training.task]
+supervised = true
+
+[training.optimizer]
+name = "ADAM"
+params = { lr = 0.01 }
+
+[training.loss]
+name = "logitcrossentropy"
+params = { dims = 1, agg = "mean" }
+
+[model]
+type = "sequential"
+paths = {sequential = "./static/pms/seq_cpm.toml"}
