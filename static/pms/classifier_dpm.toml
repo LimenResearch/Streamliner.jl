@@ -19,4 +19,4 @@ params = { dims = 1, agg = "mean" }
 
 [model]
 type = "sequential"
-paths = {sequential = "./static/seq_cpm.toml"}
+paths = {sequential = "./static/pms/seq_dpm.toml"}
