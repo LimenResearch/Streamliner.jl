@@ -5,6 +5,7 @@ using Flux
 using IterTools
 using Primes
 using Optimization, OptimizationOptimisers
+using ParametricMachinesDemos
 
 # include("model_config.jl")
 include("models/sequential.jl")
