@@ -4,6 +4,7 @@ using TOML
 using Flux
 using IterTools
 using Primes
+using Optimization, OptimizationOptimisers
 
 # include("model_config.jl")
 include("models/sequential.jl")
