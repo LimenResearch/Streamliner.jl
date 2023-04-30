@@ -12,6 +12,7 @@ struct EnrichedModel <: AbstractEnrichedModel
     loss::Any
     model::Any
     num_epochs::Integer
+    batch_size::Integer
 end
 
 @functor EnrichedModel (model,)
@@ -22,12 +23,14 @@ function EnrichedModel(path::String)
     optimizer = get_optimizer(info[:training][:optimizer])
     loss = get_loss(info[:training][:loss])
     num_epochs = info[:training][:data][:num_epochs]
+    batch_size = info[:training][:data][:batch_size]
     model = model_to_constructor[info[:model][:type]](info[:model][:paths], info[:training])
-    return EnrichedModel(info, optimizer, loss, model, num_epochs)
+    return EnrichedModel(info, optimizer, loss, model, num_epochs, batch_size)
 end
 
 function get_optimizer(opt_data::Dict)
-    opt = string_to_optim[opt_data[:name]](opt_data[:params][:lr])
+    # TODO: this needs refactoring to include all the optimizers introduced with Optimizers.jl
+    opt = string_to_optim[opt_data[:name]](opt_data[:params]...)
 end
 
 function get_loss(loss_data::Dict)

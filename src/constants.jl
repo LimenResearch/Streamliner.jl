@@ -106,4 +106,6 @@ const string_to_optim = Dict(
     "ADAMW" => Flux.Optimise.ADAMW,
     "OADAM" => Flux.Optimise.OADAM,
     "AdaBelief" => Flux.Optimise.AdaBelief,
+    "BFGS" => Optim.BFGS,
+    "LBFGS" => Optim.LBFGS
 )

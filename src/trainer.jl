@@ -1,10 +1,10 @@
 using IterTools: ncycle
 
-function train(em::EnrichedModel, train_loader, test_x, test_y; cb=nothing)
-    loss, opt = em.loss, em.opt
-    pp, re = Flux.destructure(em)
+function train(em::EnrichedModel, train_loader; cb=nothing)
+    loss, opt = em.loss, em.optimizer
+    θ, reconstruct = Flux.destructure(em)
     optfun = OptimizationFunction(loss, Optimization.AutoZygote())
-    optprob = OptimizationProblem(optfun, pp)
+    optprob = OptimizationProblem(optfun, θ)
     res = solve(optprob, opt, ncycle(train_loader, em.num_epochs), callback = cb)
 end
 

@@ -10,8 +10,8 @@ num_classes = 10
 supervised = true
 
 [training.optimizer]
-name = "ADAM"
-params = { lr = 0.01 }
+name = "BFGS"
+params = {}
 
 [training.loss]
 name = "logitcrossentropy"
