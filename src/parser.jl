@@ -33,11 +33,40 @@ function get_optimizer(opt_data::Dict)
     opt = string_to_optim[opt_data[:name]](opt_data[:params]...)
 end
 
+"""
+    translate(params::AbstractDict, translators::AbstractDict)
+
+For every `key => value` pair in `params`, if `key` is present in replace `value`
+with `translators[key][value]`.
+"""
+function translate(params::AbstractDict, translators::AbstractDict)
+    d = Dict()
+    for (k, v) in pairs(params)
+        # FIXME: why do we get a mismatch `String` vs `Symbol` without this?
+        translator = get(translators, string(k), nothing)
+        d[k] = isnothing(translator) ? v : translator[v]
+    end
+    return d
+end
+
+# Simple callable structure that also holds parameters.
+# The main purpose is to avoid storing closures in the model.
+# This way is a bit easier for debugging.
+struct ParametricFunction{F, NT<:NamedTuple}
+    f::F
+    params::NT
+end
+
+ParametricFunction(f; params...) = ParametricFunction(f, values(params))
+
+(p::ParametricFunction)(args...) = p.f(args...; p.params...)
+
 function get_loss(loss_data::Dict)
     # !!! TODO find a way to relax TOML's keys to accept greek characters.
     # This would be useful for the nonlinearity (σ) and the loss' parameters.
-    loss_fun(args...) = string_to_loss[loss_data[:name]](args...; loss_data[:params]...)
-    return loss_fun # for clarity, not necessary
+    params = translate(loss_data[:params], loss_params_translators)
+    loss = string_to_loss[loss_data[:name]]
+    return ParametricFunction(loss; params...)
 end
 
 function build_layers(layer_params::Vector, input_size::Union{Vector,Tuple};

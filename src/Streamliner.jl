@@ -1,12 +1,13 @@
 module Streamliner
 
+using Statistics
 using TOML
 using Flux
 using IterTools
 using Primes
-using Optimization, OptimizationOptimisers
-using Optim
-using OptimizationOptimJL
+using Optimization
+using Optimisers, OptimizationOptimisers
+using Optim, OptimizationOptimJL
 using ParametricMachinesDemos
 
 # include("model_config.jl")

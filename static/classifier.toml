@@ -10,7 +10,7 @@ num_classes = 10
 supervised = true
 
 [training.optimizer]
-name = "BFGS"
+name = "ADAM"
 params = {}
 
 [training.loss]

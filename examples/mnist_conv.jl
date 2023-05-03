@@ -15,4 +15,8 @@ end
 architecture = Streamliner.EnrichedModel(joinpath(@__DIR__, "static/classifier.toml"));
 train_x, train_y, test_x, test_y = get_mnist();
 train_loader = DataLoader((train_x, train_y); batchsize=architecture.batch_size, shuffle=true);
-Streamliner.train(architecture, train_loader)
+function callback(params, loss_val)
+    println(loss_val)
+    return false
+end
+Streamliner.train(architecture, train_loader; cb=callback)
