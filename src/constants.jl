@@ -91,19 +91,31 @@ const string_to_loss = Dict(
     "vae_loss" => vae_loss
 )
 
-const string_to_optim = Dict(
-    "Descent" => Flux.Optimise.Descent,
-    "Momentum" => Flux.Optimise.Momentum,
-    "Nesterov" => Flux.Optimise.Nesterov,
-    "RMSProp" => Flux.Optimise.RMSProp,
-    "ADAM" => Flux.Optimise.ADAM,
-    "RADAM" => Flux.Optimise.RADAM,
-    "AdaMax" => Flux.Optimise.AdaMax,
-    "ADAGrad" => Flux.Optimise.ADAGrad,
-    "ADADelta" => Flux.Optimise.ADADelta,
-    "AMSGrad" => Flux.Optimise.AMSGrad,
-    "NADAM" => Flux.Optimise.NADAM,
-    "ADAMW" => Flux.Optimise.ADAMW,
-    "OADAM" => Flux.Optimise.OADAM,
-    "AdaBelief" => Flux.Optimise.AdaBelief,
+const loss_params_translators = Dict(
+    "agg" => Dict(
+        "mean" => Statistics.mean,
+        "sum" => sum
+    )
 )
+
+const string_to_optim = Dict(
+    "Descent" => Optimisers.Descent,
+    "Momentum" => Optimisers.Momentum,
+    "Nesterov" => Optimisers.Nesterov,
+    "RMSProp" => Optimisers.RMSProp,
+    "ADAM" => Optimisers.ADAM,
+    "RADAM" => Optimisers.RADAM,
+    "AdaMax" => Optimisers.AdaMax,
+    "ADAGrad" => Optimisers.ADAGrad,
+    "ADADelta" => Optimisers.ADADelta,
+    "AMSGrad" => Optimisers.AMSGrad,
+    "NADAM" => Optimisers.NADAM,
+    "ADAMW" => Optimisers.ADAMW,
+    "OADAM" => Optimisers.OADAM,
+    "AdaBelief" => Optimisers.AdaBelief,
+    "BFGS" => Optim.BFGS,
+    "LBFGS" => Optim.LBFGS
+)
+
+# FIXME: needs a system to generate sensible callbacks from TOML
+default_callback(args...) = false

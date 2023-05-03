@@ -11,7 +11,7 @@ supervised = true
 
 [training.optimizer]
 name = "ADAM"
-params = { lr = 0.01 }
+params = {}
 
 [training.loss]
 name = "logitcrossentropy"
