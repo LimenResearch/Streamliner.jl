@@ -26,6 +26,23 @@ TOML = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
+BSON = "0.3"
+CUDA = "4"
+Flux = "0.13"
+ImageCore = "0.9"
+Images = "0.25"
+IterTools = "1"
+JuliaFormatter = "1"
+MLDatasets = "0.7"
+MLUtils = "0.4"
+Optim = "1.7"
+Optimisers = "0.2"
+Optimization = "3"
+OptimizationOptimJL = "0.1"
+OptimizationOptimisers = "0.1"
+Plots = "1"
+Primes = "0.5"
+TOML = "1"
 julia = "1.8"
 
 [extras]
